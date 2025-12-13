@@ -18,6 +18,30 @@ const menuItems = {
               title: 'Sales',
               type: 'item',
               url: '/dashboard/sales'
+            },
+            {
+              id: 'iklan',
+              title: 'Iklan',
+              type: 'item',
+              url: '/dashboard/iklan'
+            },
+            {
+              id: 'kalangan',
+              title: 'Kalangan',
+              type: 'item',
+              url: '/dashboard/kalangan'
+            },
+            {
+              id: 'pendaftaran',
+              title: 'Pendaftaran',
+              type: 'item',
+              url: '/dashboard/pendaftaran'
+            },
+            {
+              id: 'webinar',
+              title: 'Webinar',
+              type: 'item',
+              url: '/dashboard/webinar'
             }
           ]
         }

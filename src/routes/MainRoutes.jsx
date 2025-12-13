@@ -21,30 +21,30 @@ const MainRoutes = {
       path: 'sales',
       element: <DashboardSales />
     },
-    {
-      path: 'typography',
-      element: <Typography />
-    },
-    {
-      path: 'color',
-      element: <Color />
-    },
-    {
-      path: 'icons/feather',
-      element: <FeatherIcon />
-    },
-    {
-      path: 'icons/font-awesome-5',
-      element: <FontAwesome />
-    },
-    {
-      path: 'icons/material',
-      element: <MaterialIcon />
-    },
-    {
-      path: 'sample-page',
-      element: <Sample />
-    }
+    // {
+    //   path: 'typography',
+    //   element: <Typography />
+    // },
+    // {
+    //   path: 'color',
+    //   element: <Color />
+    // },
+    // {
+    //   path: 'icons/feather',
+    //   element: <FeatherIcon />
+    // },
+    // {
+    //   path: 'icons/font-awesome-5',
+    //   element: <FontAwesome />
+    // },
+    // {
+    //   path: 'icons/material',
+    //   element: <MaterialIcon />
+    // },
+    // {
+    //   path: 'sample-page',
+    //   element: <Sample />
+    // }
   ]
 };
 
