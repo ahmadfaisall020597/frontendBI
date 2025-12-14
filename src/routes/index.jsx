@@ -1,39 +1,32 @@
 import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-// project import
 import MainRoutes from './MainRoutes';
 import GuestLayout from 'layouts/GuestLayout';
+import GuestRoute from './GuestRoute';
 
-// auth pages
 const Login = lazy(() => import('../views/auth/login'));
 const Register = lazy(() => import('../views/auth/register'));
 
-// ==============================|| ROUTING RENDER ||============================== //
-
 const router = createBrowserRouter(
   [
-    // 🔐 AUTH (DEFAULT)
+    // 🚪 GUEST (BELUM LOGIN)
     {
-      path: '/',
-      element: <GuestLayout />,
+      element: <GuestRoute />,
       children: [
         {
-          index: true,
-          element: <Navigate to="/login" replace />
-        },
-        {
-          path: 'login',
-          element: <Login />
-        },
-        {
-          path: 'register',
-          element: <Register />
+          path: '/',
+          element: <GuestLayout />,
+          children: [
+            { index: true, element: <Navigate to="/login" replace /> },
+            { path: 'login', element: <Login /> },
+            { path: 'register', element: <Register /> }
+          ]
         }
       ]
     },
 
-    // 🔒 ADMIN ROUTES
+    // 🔒 PROTECTED (SUDAH LOGIN)
     MainRoutes,
 
     // fallback

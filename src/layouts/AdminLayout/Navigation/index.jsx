@@ -1,48 +1,30 @@
-import { useContext } from 'react';
-
-// project imports
+import { useContext, useMemo } from 'react';
 import NavContent from './NavContent';
 import { ConfigContext } from 'contexts/ConfigContext';
+import { AuthContext } from 'contexts/AuthContext';
 import useWindowSize from 'hooks/useWindowSize';
 import navigation from 'menu-items';
-import navitemcollapse from 'menu-items-collapse';
-import * as actionType from 'store/actions';
-
-// -----------------------|| NAVIGATION ||-----------------------//
+import { filterMenuByRole } from '../../../utils/filterMenubyRole';
 
 export default function Navigation() {
-  const configContext = useContext(ConfigContext);
-  const { collapseMenu, collapseLayout } = configContext.state;
+  const { state, dispatch } = useContext(ConfigContext);
+  const { user, loading } = useContext(AuthContext);
   const windowSize = useWindowSize();
-  const { dispatch } = configContext;
 
-  const navToggleHandler = () => {
-    dispatch({ type: actionType.COLLAPSE_MENU });
-  };
+  const role = user?.role;
 
-  let navClass = ['dark-sidebar'];
+  const filteredMenu = useMemo(() => {
+    if (loading || !role) return [];
+    return filterMenuByRole(navigation.items, role);
+  }, [loading, role]);
 
-  let navContent = <NavContent navigation={collapseLayout ? navitemcollapse.items : navigation.items} />;
-  navClass = [...navClass, 'pc-sidebar'];
-  if (windowSize.width <= 1024 && collapseMenu) {
-    navClass = [...navClass, 'mob-sidebar-active'];
-  } else if (collapseMenu) {
-    navClass = [...navClass, 'navbar-collapsed'];
+  if (loading || !windowSize.width) {
+    return null;
   }
-
-  let navBarClass = ['navbar-wrapper'];
-
-  let mobileOverlay = <></>;
-  if (windowSize.width <= 1024 && collapseMenu) {
-    mobileOverlay = <div className="pc-menu-overlay" onClick={navToggleHandler} aria-hidden="true" />;
-  }
-
-  let navContentDOM = <div className={navBarClass.join(' ')}>{navContent}</div>;
 
   return (
-    <nav className={navClass.join(' ')}>
-      {navContentDOM}
-      {mobileOverlay}
+    <nav className="dark-sidebar pc-sidebar">
+      <NavContent navigation={filteredMenu} />
     </nav>
   );
 }

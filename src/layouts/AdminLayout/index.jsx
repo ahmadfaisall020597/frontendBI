@@ -48,11 +48,7 @@ export default function AdminLayout() {
             </Suspense>
           </>
         </div>
-        {/* <a href={BUY_NOW} target="_blank" className="btn btn-danger position-fixed bottom-0 end-0 mb-5 me-3 z-1" rel="noreferrer">
-          Buy Now
-        </a> */}
       </div>
-      {/* <Footer /> */}
     </>
   );
 
