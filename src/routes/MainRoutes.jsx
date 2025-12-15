@@ -4,8 +4,17 @@ import ProtectedRoute from './ProtectedRoute';
 
 const DashboardSales = lazy(() => import('../views/dashboard/DashSales'));
 const ListIklan = lazy(() => import('../views/dashboard/Iklan'));
+const CreateIklan = lazy(() => import('../views/dashboard/Iklan/create'));
+const IklanDetailEdit = lazy(() => import('../views/dashboard/Iklan/detail'));
+
 const ListKalangan = lazy(() => import('../views/dashboard/Kalangan'));
+const CreateKalangan = lazy(() => import('../views/dashboard/Kalangan/create'));
+const KalanganDetailEdit = lazy(() => import('../views/dashboard/Kalangan/detail'));
+
 const ListWebinar = lazy(() => import('../views/dashboard/Webinar'));
+const CreateWebinar = lazy(() => import('../views/dashboard/Webinar/create'));
+const DetailEditWebinar = lazy(() => import('../views/dashboard/Webinar/detail'));
+
 const Pendaftaran = lazy(() => import('../views/dashboard/Pendaftaran'));
 
 const MainRoutes = {
@@ -22,9 +31,18 @@ const MainRoutes = {
           children: [
             { index: true, element: <DashboardSales /> },
             { path: 'sales', element: <DashboardSales /> },
+
             { path: 'list-iklan', element: <ListIklan /> },
+            { path: 'create-iklan', element: <CreateIklan /> },
+            { path: 'iklan/:id', element: <IklanDetailEdit /> },
+
             { path: 'list-kalangan', element: <ListKalangan /> },
-            { path: 'list-webinar', element: <ListWebinar /> }
+            { path: 'create-kalangan', element: <CreateKalangan /> },
+            { path: 'kalangan/:id', element: <KalanganDetailEdit /> },
+
+            { path: 'list-webinar', element: <ListWebinar /> },
+            { path: 'create-webinar', element: <CreateWebinar /> },
+            { path: 'webinar/:id', element: <DetailEditWebinar /> },
           ]
         },
 

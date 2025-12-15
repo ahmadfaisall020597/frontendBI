@@ -5,20 +5,22 @@ const apiClient = (baseURL) => {
         baseURL,
         headers: {
             'Content-Type': 'application/json',
-            Accept: 'application/json'
-        }
+            Accept: 'application/json',
+        },
     });
 
-    // interceptor token
     instance.interceptors.request.use((config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        const auth = localStorage.getItem('auth');
+        if (auth) {
+            const { token } = JSON.parse(auth);
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     });
 
-    return instance;
+    return instance; // ⬅️ INI WAJIB ADA
 };
 
 export default apiClient;

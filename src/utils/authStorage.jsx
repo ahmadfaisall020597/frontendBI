@@ -14,11 +14,14 @@ export const clearAuth = () => {
     localStorage.removeItem('auth');
 };
 
-export const getToken = () => localStorage.getItem('token');
+export const getToken = () => {
+    const auth = getAuth();
+    return auth?.token || null;
+};
 
 export const isAuthenticated = () => {
-    return !!localStorage.getItem('token');
-};
+    return !!getToken();
+};;
 
 export const getUser = () => {
     const user = localStorage.getItem('user');
