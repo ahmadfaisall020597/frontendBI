@@ -24,12 +24,19 @@ export const isAuthenticated = () => {
 };;
 
 export const getUser = () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+        const auth = localStorage.getItem('auth');
+        if (!auth) return null;
+
+        const parsed = JSON.parse(auth);
+        return parsed?.user || null;
+    } catch (error) {
+        console.error('Get user error:', error);
+        return null;
+    }
 };
 
 export const getUserRole = () => {
-    const user = localStorage.getItem('user');
-    if (!user) return null;
-    return JSON.parse(user).role;
+    const auth = getAuth();
+    return auth?.user?.role || null;
 };
