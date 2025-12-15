@@ -11,3 +11,8 @@ export const login = async (payload) => {
 export const logout = async () => {
     return authApi.post('/logout');
 };
+
+export const register = async (payload) => {
+    const response = await authApi.post('/register', payload);
+    return response.data;
+};
