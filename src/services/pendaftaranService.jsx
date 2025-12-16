@@ -12,3 +12,10 @@ export const getPendaftaranSaya = async () => {
     const res = await api.get('/pendaftaran-saya');
     return res.data;
 };
+
+export const getListPendaftaranAdmin = async (search = '', page = 1) => {
+    const res = await api.get(
+        `/list-pendaftaran?search=${search}&page=${page}`
+    );
+    return res.data;
+};

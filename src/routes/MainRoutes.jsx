@@ -16,6 +16,7 @@ const CreateWebinar = lazy(() => import('../views/dashboard/Webinar/create'));
 const DetailEditWebinar = lazy(() => import('../views/dashboard/Webinar/detail'));
 
 const Pendaftaran = lazy(() => import('../views/dashboard/Pendaftaran'));
+const ListPendaftaranAdmin = lazy(() => import('../views/dashboard/PendaftaranAdmin'));
 
 const MainRoutes = {
   path: '/dashboard',
@@ -43,6 +44,8 @@ const MainRoutes = {
             { path: 'list-webinar', element: <ListWebinar /> },
             { path: 'create-webinar', element: <CreateWebinar /> },
             { path: 'webinar/:id', element: <DetailEditWebinar /> },
+
+            { path: 'list-pendaftaran', element: <ListPendaftaranAdmin /> },
           ]
         },
 

@@ -42,6 +42,13 @@ const menuItems = {
               url: '/dashboard/admin/list-webinar',
               roles: ['admin']
             },
+            {
+              id: 'pendaftaran',
+              title: 'Pendaftaran',
+              type: 'item',
+              url: '/dashboard/admin/list-pendaftaran',
+              roles: ['admin']
+            },
 
             // 👤 MEMBER
             {
