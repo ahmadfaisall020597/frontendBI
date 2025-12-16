@@ -1,165 +1,313 @@
-// react-bootstrap
-import { Row, Col, Card } from 'react-bootstrap';
+import { Bar, Line } from "react-chartjs-2";
+import { useEffect, useState } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Dashboard } from '../../../services/dashboardService';
 
-// third party
-import Chart from 'react-apexcharts';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Tooltip,
+  Legend
+);
 
-// project imports
-import FlatCard from 'components/Widgets/Statistic/FlatCard';
-import ProductCard from 'components/Widgets/Statistic/ProductCard';
-import FeedTable from 'components/Widgets/FeedTable';
-import ProductTable from 'components/Widgets/ProductTable';
-import { SalesCustomerSatisfactionChartData } from './chart/sales-customer-satisfication-chart';
-import { SalesAccountChartData } from './chart/sales-account-chart';
-import { SalesSupportChartData } from './chart/sales-support-chart';
-import { SalesSupportChartData1 } from './chart/sales-support-chart1';
-import feedData from 'data/feedData';
-import productData from 'data/productTableData';
 
-// -----------------------|| DASHBOARD SALES ||-----------------------//
 export default function DashSales() {
+  const [summary, setSummary] = useState(null);
+  const [kalangan, setKalangan] = useState([]);
+  const [iklan, setIklan] = useState([]);
+  const [top10Webinar, setTop10Webinar] = useState([]);
+  const [top10Kalangan, setTop10Kalangan] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const res = await Dashboard();
+
+      setSummary(res.summary);
+      setKalangan(res.kalangan || []);
+      setIklan(res.iklan || []);
+      setTop10Webinar(res.webinar || []);
+      setTop10Kalangan(res.kalangan_terbanyak || []);
+
+      console.log("DASHBOARD RESPONSE:", res);
+    } catch (error) {
+      console.error("Gagal load dashboard:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const totalPendaftar = top10Kalangan.reduce(
+    (sum, item) => sum + Number(item.total_peserta || 0),
+    0
+  );
+  /* ===================== DATA ===================== */
+
+  const KalanganChart = {
+    labels: kalangan.map((k) => k.nama_kalangan),
+    datasets: [
+      {
+        data: kalangan.map((k) => k.total_peserta),
+        backgroundColor: "#ffffff",
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const IklanChart = {
+    labels: iklan.map((i) => i.nama_iklan),
+    datasets: [
+      {
+        label: "Total Biaya Iklan",
+        data: iklan.map((i) => Number(i.total_biaya_iklan)),
+        borderColor: "#9ad0ff",
+        backgroundColor: "#9ad0ff",
+        tension: 0.4,
+      },
+      {
+        label: "Keuntungan",
+        data: iklan.map((i) => Number(i.total_pendapatan)),
+        borderColor: "#0b1e3b",
+        backgroundColor: "#0b1e3b",
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const webinarData = {
+    labels: top10Webinar.map(item => item.nama_webinar),
+    datasets: [
+      {
+        data: top10Webinar.map(item => item.total_peserta),
+        backgroundColor: "#ffffff",
+        borderRadius: 6,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: "#fff", font: { size: 10 } },
+      },
+    },
+    scales: {
+      x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+      y: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+    },
+  };
+
+  const horizontalOptions = {
+    ...chartOptions,
+    indexAxis: "y",
+  };
+
+  /* ===================== RENDER ===================== */
+
   return (
-    <Row>
-      <Col md={12} xl={6}>
-        <Card className="flat-card">
-          <div className="row-table">
-            <Card.Body className="col-sm-6 br">
-              <FlatCard params={{ title: 'Customers', iconClass: 'text-primary mb-1', icon: 'group', value: '1000' }} />
-            </Card.Body>
-            <Card.Body className="col-sm-6 d-none d-md-table-cell d-lg-table-cell d-xl-table-cell card-body br">
-              <FlatCard params={{ title: 'Revenue', iconClass: 'text-primary mb-1', icon: 'language', value: '1252' }} />
-            </Card.Body>
-            <Card.Body className="col-sm-6 card-bod">
-              <FlatCard params={{ title: 'Growth', iconClass: 'text-primary mb-1', icon: 'unarchive', value: '600' }} />
-            </Card.Body>
-          </div>
-          <div className="row-table">
-            <Card.Body className="col-sm-6 br">
-              <FlatCard
-                params={{
-                  title: 'Returns',
-                  iconClass: 'text-primary mb-1',
-                  icon: 'swap_horizontal_circle',
-                  value: '3550'
-                }}
-              />
-            </Card.Body>
-            <Card.Body className="col-sm-6 d-none d-md-table-cell d-lg-table-cell d-xl-table-cell card-body br">
-              <FlatCard params={{ title: 'Downloads', iconClass: 'text-primary mb-1', icon: 'cloud_download', value: '3550' }} />
-            </Card.Body>
-            <Card.Body className="col-sm-6 card-bod">
-              <FlatCard params={{ title: 'Order', iconClass: 'text-primary mb-1', icon: 'shopping_cart', value: '100%' }} />
-            </Card.Body>
-          </div>
-        </Card>
-        <Row>
-          <Col md={6}>
-            <Card className="support-bar overflow-hidden">
-              <Card.Body className="pb-0">
-                <h2 className="m-0">53.94%</h2>
-                <span className="text-primary">Conversion Rate</span>
-                <p className="mb-3 mt-3">Number of conversions divided by the total visitors. </p>
-              </Card.Body>
-              <Chart {...SalesSupportChartData()} />
-              <Card.Footer className="border-0 bg-primary text-white background-pattern-white">
-                <Row className="text-center">
-                  <Col>
-                    <h4 className="m-0 text-white">10</h4>
-                    <span>2018</span>
-                  </Col>
-                  <Col>
-                    <h4 className="m-0 text-white">15</h4>
-                    <span>2017</span>
-                  </Col>
-                  <Col>
-                    <h4 className="m-0 text-white">13</h4>
-                    <span>2016</span>
-                  </Col>
-                </Row>
-              </Card.Footer>
-            </Card>
-          </Col>
-          <Col md={6}>
-            <Card className="support-bar overflow-hidden">
-              <Card.Body className="pb-0">
-                <h2 className="m-0">1432</h2>
-                <span className="text-primary">Order Delivered</span>
-                <p className="mb-3 mt-3">Number of conversions divided by the total visitors. </p>
-              </Card.Body>
-              <Card.Footer className="border-0">
-                <Row className="text-center">
-                  <Col>
-                    <h4 className="m-0">130</h4>
-                    <span>May</span>
-                  </Col>
-                  <Col>
-                    <h4 className="m-0">251</h4>
-                    <span>June</span>
-                  </Col>
-                  <Col>
-                    <h4 className="m-0 ">235</h4>
-                    <span>July</span>
-                  </Col>
-                </Row>
-              </Card.Footer>
-              <Chart type="bar" {...SalesSupportChartData1()} />
-            </Card>
-          </Col>
-        </Row>
-      </Col>
-      <Col md={12} xl={6}>
-        <Card>
-          <Card.Header>
-            <h5>Department wise monthly sales report</h5>
-          </Card.Header>
-          <Card.Body>
-            <Row className="pb-2">
-              <div className="col-auto m-b-10">
-                <h3 className="mb-1">$21,356.46</h3>
-                <span>Total Sales</span>
-              </div>
-              <div className="col-auto m-b-10">
-                <h3 className="mb-1">$1935.6</h3>
-                <span>Average</span>
-              </div>
-            </Row>
-            <Chart {...SalesAccountChartData()} />
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={12} xl={6}>
-        <Card>
-          <Card.Body>
-            <h6>Customer Satisfaction</h6>
-            <span>It takes continuous effort to maintain high customer satisfaction levels Internal and external.</span>
-            <Row className="d-flex justify-content-center align-items-center">
-              <Col>
-                <Chart type="pie" {...SalesCustomerSatisfactionChartData()} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-        {/* Product Table */}
-        <ProductTable {...productData} />
-      </Col>
-      <Col md={12} xl={6}>
-        <Row>
-          <Col sm={6}>
-            <ProductCard params={{ title: 'Total Profit', primaryText: '$1,783', icon: 'card_giftcard' }} />
-          </Col>
-          <Col sm={6}>
-            <ProductCard params={{ variant: 'primary', title: 'Total Orders', primaryText: '15,830', icon: 'local_mall' }} />
-          </Col>
-          <Col sm={6}>
-            <ProductCard params={{ variant: 'primary', title: 'Average Price', primaryText: '$6,780', icon: 'monetization_on' }} />
-          </Col>
-          <Col sm={6}>
-            <ProductCard params={{ title: 'Product Sold', primaryText: '6,784', icon: 'local_offer' }} />
-          </Col>
-        </Row>
-        {/* Feed Table */}
-        <FeedTable {...feedData} />
-      </Col>
-    </Row>
+    <>
+      {/* LOCK SCROLL */}
+      <style>{`
+        html, body, #root {
+          height: 100%;
+          margin: 0;
+          overflow: hidden;
+        }
+      `}</style>
+
+      <div style={styles.page}>
+        {/* HEADER */}
+        <div style={styles.header}>
+          <h1 style={styles.title}>Marketing Campaign Insights Analysis</h1>
+        </div>
+
+        {/* KPI */}
+        <div style={styles.kpiGrid}>
+          <KPI
+            title="Keuntungan"
+            value={`Rp${Number(summary?.keuntungan || 0).toLocaleString("id-ID")}`}
+          />
+
+          <KPI
+            title="Laba atas Investasi"
+            value={`Rp${Number(summary?.laba_persen || 0).toLocaleString("id-ID")}`}
+          />
+
+          <KPI
+            title="Total Pendapatan"
+            value={`Rp${Number(summary?.total_pendapatan || 0).toLocaleString("id-ID")}`}
+          />
+
+          <KPI
+            title="Total Biaya Iklan"
+            value={`Rp${Number(summary?.total_biaya_iklan || 0).toLocaleString("id-ID")}`}
+          />
+        </div>
+
+        {/* MAIN GRID */}
+        <div style={styles.mainGrid}>
+          {/* ROW 1 */}
+          <Panel title="Jumlah yang Hadir Berdasarkan Target">
+            {kalangan.length > 0 && (
+              <Bar data={KalanganChart} options={chartOptions} />
+            )}
+          </Panel>
+
+          <Panel title="Perbandingan Biaya Iklan & Keuntungan">
+            {iklan.length > 0 && (
+              <Line data={IklanChart} options={chartOptions} />
+            )}
+          </Panel>
+
+          {/* ROW 2 */}
+          <Panel title="10 Webinar Terpopuler">
+            <Bar data={webinarData} options={horizontalOptions} />
+          </Panel>
+
+          <Panel title="Partisipasi">
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th align="left">Target</th>
+                  <th align="right">Pendaftar</th>
+                  <th align="right">Hadir</th>
+                </tr>
+              </thead>
+              <tbody>
+                {top10Kalangan.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.nama_kalangan}</td>
+                    <td align="right">{item.total_peserta}</td>
+                    <td align="right">{item.total_peserta}</td>
+                  </tr>
+                ))}
+
+                {/* TOTAL */}
+                <tr style={{ fontWeight: 700, borderTop: '1px solid #fff' }}>
+                  <td>Total</td>
+                  <td align="right">{totalPendaftar}</td>
+                  <td align="right">{totalPendaftar}</td>
+                </tr>
+              </tbody>
+            </table>
+          </Panel>
+        </div>
+      </div>
+    </>
   );
 }
+
+/* ===================== COMPONENT ===================== */
+
+const KPI = ({ title, value }) => (
+  <div style={styles.kpiCard}>
+    <div style={styles.kpiValue}>{value}</div>
+    <div style={styles.kpiTitle}>{title}</div>
+  </div>
+);
+
+const Panel = ({ title, children }) => (
+  <div style={styles.panel}>
+    <h3 style={styles.panelTitle}>{title}</h3>
+    <div style={styles.chartWrapper}>{children}</div>
+  </div>
+);
+
+/* ===================== STYLES ===================== */
+
+const styles = {
+  page: {
+    height: "90vh",
+    padding: 16,
+    display: "flex",
+    flexDirection: "column",
+    background:
+      "linear-gradient(135deg, #0b1e3b 0%, #0f3d6e 50%, #0b1e3b 100%)",
+    color: "#fff",
+    fontFamily: "Segoe UI, sans-serif",
+  },
+
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "rgba(120,180,255,0.6)",
+    padding: "12px 20px",
+    borderRadius: 14,
+    marginBottom: 14,
+  },
+
+  title: { fontSize: 20, fontWeight: 700 },
+
+  badge: {
+    background: "#1e88e5",
+    padding: "6px 14px",
+    borderRadius: 16,
+    fontSize: 12,
+  },
+
+  kpiGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: 14,
+    marginBottom: 14,
+  },
+
+  kpiCard: {
+    background: "linear-gradient(180deg,#7cb3ff,#4b83d6)",
+    borderRadius: 16,
+    padding: 14,
+    textAlign: "center",
+  },
+
+  kpiValue: { fontSize: 20, fontWeight: 800 },
+  kpiTitle: { fontSize: 12 },
+
+  mainGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gridTemplateRows: "1fr 1fr",
+    gap: 14,
+    flex: 1,
+    minHeight: 0,
+  },
+
+  panel: {
+    background: "rgba(30,80,140,0.75)",
+    borderRadius: 16,
+    padding: 14,
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  panelTitle: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+
+  chartWrapper: {
+    flex: 1,
+    minHeight: 0,
+  },
+
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: 12,
+  },
+};
